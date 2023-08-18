@@ -57,9 +57,26 @@ def pretokenize():
     data_file = os.path.join(DATA_CACHE_DIR, "tinyshakespeare.txt")
 
     all_tokens = []
+    expecting_header = True # The file starts out with a header
     with open(data_file, "r") as f:
-        for line in f:
+        for line_num, line in enumerate(f, start=1):
             text = line.strip()
+            
+            #AB: We skip the empty lines and the header (NAME:)
+            if len(text) == 0:
+                expecting_header = True
+                continue          
+            if expecting_header:
+                if ":" not in text:
+                    print("Expecting header, but this does not look like one:")
+                    print(f"{line_num}: {text}")
+                expecting_header = False
+                continue
+            
+            #AB: We do not want ";" in the short NFT sentences.
+            text = text.replace(";", ".")
+                
+                    
             tokens = enc.encode(text, bos=True, eos=False)
             all_tokens.extend(tokens)
     all_tokens = np.array(all_tokens, dtype=np.uint16)
