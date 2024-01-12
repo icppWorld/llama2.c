@@ -549,6 +549,16 @@ int main(int argc, char *argv[]) {
         if (!file) { fprintf(stderr, "Couldn't open file %s\n", checkpoint); return 1; }
         // read in the config header
         if (fread(&config, sizeof(Config), 1, file) != 1) { return 1; }
+
+        // AB
+        printf("dim: %d\n", config.dim);
+        printf("hidden_dim: %d\n", config.hidden_dim);
+        printf("n_layers: %d\n", config.n_layers);
+        printf("n_heads: %d\n", config.n_heads);
+        printf("n_kv_heads: %d\n", config.n_kv_heads);
+        printf("vocab_size: %d\n", config.vocab_size);
+        printf("seq_len: %d\n", config.seq_len);
+
         // negative vocab size is hacky way of signaling unshared weights. bit yikes.
         int shared_weights = config.vocab_size > 0 ? 1 : 0;
         config.vocab_size = abs(config.vocab_size);
